@@ -68,6 +68,7 @@ export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: D
         })
 }
 export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setStatusAC("loading"))
     todolistsAPI.createTask(todolistId, title)
         .then(res => {
             if (res.data.resultCode === 0) {
@@ -79,6 +80,7 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
             } else {
                 dispatch(setErrorAC("unknown error occurred"))
             }
+            dispatch(setStatusAC("success"))
         })
 }
 export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
