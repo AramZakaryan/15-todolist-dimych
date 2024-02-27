@@ -22,12 +22,12 @@ export const appReducer = (state: InitialStateType = initialState, action: AppAc
 
 
 // actions
-export const setStatusAC = (status: StatusType) => ({type: "APP/SET-STATUS", status} as const)
-export const setErrorAC = (error: ErrorType) => ({type: "APP/SET-ERROR", error} as const)
+export const setAppStatusAC = (status: StatusType) => ({type: "APP/SET-STATUS", status} as const)
+export const setAppErrorAC = (error: ErrorType) => ({type: "APP/SET-ERROR", error} as const)
 
 // types
 
-export type StatusType = "idle" | "success" | "loading" | "faild"
+export type StatusType = "idle" | "success" | "loading" | "failed"
 export type ErrorType = string | null
 
 export type InitialStateType = {
@@ -35,8 +35,8 @@ export type InitialStateType = {
     error: ErrorType
 }
 
-export type SetStatusActionType = ReturnType<typeof setStatusAC>;
-export type SetErrorActionType = ReturnType<typeof setErrorAC>;
+export type SetStatusActionType = ReturnType<typeof setAppStatusAC>;
+export type SetErrorActionType = ReturnType<typeof setAppErrorAC>;
 export type AppActionsType = SetStatusActionType
     | SetErrorActionType
 

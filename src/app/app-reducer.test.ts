@@ -1,4 +1,4 @@
-import {AppActionsType, appReducer, setErrorAC, InitialStateType, setStatusAC, ErrorType, StatusType} from "./app-reducer";
+import {AppActionsType, appReducer, setAppErrorAC, InitialStateType, setAppStatusAC, ErrorType, StatusType} from "./app-reducer";
 
 
 let initialState: InitialStateType
@@ -19,7 +19,7 @@ test("Correct error message should be set", () => {
 
     // ACTIONS
     const errorMessage: ErrorType = "some error"
-    const action: AppActionsType = setErrorAC(errorMessage)
+    const action: AppActionsType = setAppErrorAC(errorMessage)
     const endState = appReducer(initialState, action)
 
     // EXPECTATIONS
@@ -35,7 +35,7 @@ test("Correct status state should be set", () => {
 
     // ACTIONS
     const statusState: StatusType = "success"
-    const action: AppActionsType = setStatusAC(statusState)
+    const action: AppActionsType = setAppStatusAC(statusState)
     const endState = appReducer(initialState, action)
 
     // EXPECTATIONS
