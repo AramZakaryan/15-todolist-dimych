@@ -23,6 +23,13 @@ function App() {
 
     const status = useAppSelector<StatusType>(state => state.app.status)
 
+    let loading
+
+    if (status === "loading") {
+        // console.log("loading run")
+        loading = <LinearProgress/>
+    }
+
     return (
         <div className="App">
             <CustomizedSnackbars/>
@@ -36,7 +43,7 @@ function App() {
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
-                {status === "loading" && <LinearProgress />}
+                {loading}
             </AppBar>
             <Container fixed>
                 <TodolistsList/>
