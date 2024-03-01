@@ -1,5 +1,5 @@
 import {
-    ActionsType,
+    TodolistsActionsType,
     changeTodolistEntityStatusAC,
     EntityStatusType,
     TodolistDomainType,
@@ -33,7 +33,7 @@ test("Correct todolist's entityStatus should be set", () => {
     // DATA
     const todolistId:string = initialState[1].id
     const newEntityStatus: EntityStatusType ="loading"
-    const action: ActionsType = changeTodolistEntityStatusAC(todolistId,newEntityStatus)
+    const action: TodolistsActionsType = changeTodolistEntityStatusAC(todolistId,newEntityStatus)
 
     // ACTIONS
     const finalState = todolistsReducer(initialState, action)

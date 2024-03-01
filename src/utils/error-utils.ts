@@ -1,7 +1,7 @@
-import {ResponseType, TaskType} from "../../api/todolists-api";
+import {ResponseType, TaskType} from "../api/todolists-api";
 import {Dispatch} from "redux";
-import {AppActionsType, setAppErrorAC, setAppStatusAC} from "../../app/app-reducer";
-import {ActionsType} from "./tasks-reducer";
+import {AppActionsType, setAppErrorAC, setAppStatusAC} from "../app/app-reducer";
+import {TasksActionsType} from "../features/TodolistsList/tasks-reducer";
 
 export function handleAppError(messages: ResponseType["messages"], dispatch: Dispatch<AppActionsType>) {
     if (messages.length) {
@@ -13,7 +13,7 @@ export function handleAppError(messages: ResponseType["messages"], dispatch: Dis
     dispatch(setAppStatusAC("failed"))
 }
 
-export function handleNetError(message: string, dispatch: Dispatch) {
+export function handleNetError(message: string, dispatch: Dispatch<AppActionsType>) {
     dispatch(setAppErrorAC(message ??= "Some error occurred."))
     dispatch(setAppStatusAC("failed"))
 

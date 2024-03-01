@@ -1,0 +1,5 @@
+export enum RESULT_CODE {
+    SUCCEEDED,
+    FAILED,
+    RECAPTCHA_FAILED = 10
+}

@@ -2,12 +2,13 @@ import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType}
 import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../../api/todolists-api'
 import {Dispatch} from 'redux'
 import {AppRootStateType} from '../../app/store'
-import {AppActionsType, setAppErrorAC, setAppStatusAC} from "../../app/app-reducer";
-import {handleAppError, handleNetError} from "./error-utils";
+import {AppActionsType, setAppStatusAC} from "../../app/app-reducer";
+import {handleAppError, handleNetError} from "../../utils/error-utils";
+import {RESULT_CODE} from "../../types/types";
 
 const initialState: TasksStateType = {}
 
-export const tasksReducer = (state: TasksStateType = initialState, action: ActionsType): TasksStateType => {
+export const tasksReducer = (state: TasksStateType = initialState, action: TasksActionsType): TasksStateType => {
     switch (action.type) {
         case 'REMOVE-TASK':
             return {...state, [action.todolistId]: state[action.todolistId].filter(t => t.id !== action.taskId)}
@@ -50,30 +51,38 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) =>
     ({type: 'SET-TASKS', tasks, todolistId} as const)
 
 // thunks
-export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
+export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<TasksActionsType>) => {
     dispatch(setAppStatusAC("loading"))
     todolistsAPI.getTasks(todolistId)
         .then((res) => {
+
             const tasks = res.data.items
             const action = setTasksAC(tasks, todolistId)
             dispatch(action)
             dispatch(setAppStatusAC("success"))
         })
+        .catch(err => handleNetError(err.message, dispatch))
+
 }
 
-export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
+export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<TasksActionsType>) => {
     dispatch(setAppStatusAC("loading"))
     todolistsAPI.deleteTask(todolistId, taskId)
         .then(res => {
-            const action = removeTaskAC(taskId, todolistId)
-            dispatch(action)
-            dispatch(setAppStatusAC("success"))
-
+            if (res.data.resultCode === RESULT_CODE.SUCCEEDED) {
+                const action = removeTaskAC(taskId, todolistId)
+                dispatch(action)
+                dispatch(setAppStatusAC("success"))
+            } else {
+                handleAppError(res.data.messages, dispatch)
+            }
         })
+        .catch(err => handleNetError(err.message, dispatch))
+
 }
 
 
-export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
+export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispatch<TasksActionsType>) => {
     dispatch(setAppStatusAC("loading"))
     todolistsAPI.createTask(todolistId, title)
         .then(res => {
@@ -82,7 +91,6 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
                 const action = addTaskAC(task)
                 dispatch(action)
                 dispatch(setAppStatusAC("success"))
-
             } else {
                 handleAppError(res.data.messages, dispatch)
             }
@@ -91,7 +99,7 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
 
 }
 export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
-    (dispatch: Dispatch<ActionsType>, getState: () => AppRootStateType) => {
+    (dispatch: Dispatch<TasksActionsType>, getState: () => AppRootStateType) => {
 
         dispatch(setAppStatusAC("loading"))
 
@@ -145,7 +153,7 @@ export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
 
-export type ActionsType =
+export type TasksActionsType =
     | ReturnType<typeof removeTaskAC>
     | ReturnType<typeof addTaskAC>
     | ReturnType<typeof updateTaskAC>
@@ -155,8 +163,3 @@ export type ActionsType =
     | ReturnType<typeof setTasksAC>
     | AppActionsType
 
-enum RESULT_CODE {
-    SUCCEEDED,
-    FAILED,
-    RECAPTCHA_FAILED = 10
-}

@@ -22,7 +22,7 @@ import {StatusType} from "./app-reducer";
 function App() {
 
 
-    const status = useAppSelector<StatusType>(state => state.app.status)
+    const status = useAppSelector<StatusType>(state => state.app.appStatus)
 
     let loading
 

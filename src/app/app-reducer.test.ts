@@ -6,7 +6,7 @@ let initialState: InitialStateType
 beforeEach(() => {
 
     initialState = {
-        status: "idle",
+        appStatus: "idle",
         error: null
     }
 
@@ -39,6 +39,6 @@ test("Correct status state should be set", () => {
     const endState = appReducer(initialState, action)
 
     // EXPECTATIONS
-    expect(endState.status).toBe(statusState)
+    expect(endState.appStatus).toBe(statusState)
 
 })
