@@ -58,14 +58,17 @@ export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionsT
             const action = setTasksAC(tasks, todolistId)
             dispatch(action)
             dispatch(setAppStatusAC("success"))
-
         })
 }
+
 export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC("loading"))
     todolistsAPI.deleteTask(todolistId, taskId)
         .then(res => {
             const action = removeTaskAC(taskId, todolistId)
             dispatch(action)
+            dispatch(setAppStatusAC("success"))
+
         })
 }
 
@@ -74,10 +77,12 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
     dispatch(setAppStatusAC("loading"))
     todolistsAPI.createTask(todolistId, title)
         .then(res => {
-            if (res.data.resultCode === 0) {
+            if (res.data.resultCode === RESULT_CODE.SUCCEEDED) {
                 const task = res.data.data.item
                 const action = addTaskAC(task)
                 dispatch(action)
+                dispatch(setAppStatusAC("success"))
+
             } else {
                 handleAppError(res.data.messages, dispatch)
             }
@@ -87,12 +92,16 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
 }
 export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
     (dispatch: Dispatch<ActionsType>, getState: () => AppRootStateType) => {
+
+        dispatch(setAppStatusAC("loading"))
+
         const state = getState()
         const task = state.tasks[todolistId].find(t => t.id === taskId)
         if (!task) {
             //throw new Error("task not found in the state");
             console.warn('task not found in the state')
             return
+
         }
 
         const apiModel: UpdateTaskModelType = {
@@ -105,11 +114,9 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
             ...domainModel
         }
 
-        dispatch(setAppStatusAC("loading"))
-
         todolistsAPI.updateTask(todolistId, taskId, apiModel)
             .then(res => {
-                if (res.data.resultCode === 0) {
+                if (res.data.resultCode === RESULT_CODE.SUCCEEDED) {
                     const action = updateTaskAC(taskId, domainModel, todolistId)
                     dispatch(action)
                     dispatch(setAppStatusAC("success"))
@@ -122,7 +129,9 @@ export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelT
 
     }
 
+
 // types
+
 export type UpdateDomainTaskModelType = {
     title?: string
     description?: string
@@ -131,9 +140,11 @@ export type UpdateDomainTaskModelType = {
     startDate?: string
     deadline?: string
 }
+
 export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
+
 export type ActionsType =
     | ReturnType<typeof removeTaskAC>
     | ReturnType<typeof addTaskAC>
@@ -143,3 +154,9 @@ export type ActionsType =
     | SetTodolistsActionType
     | ReturnType<typeof setTasksAC>
     | AppActionsType
+
+enum RESULT_CODE {
+    SUCCEEDED,
+    FAILED,
+    RECAPTCHA_FAILED = 10
+}

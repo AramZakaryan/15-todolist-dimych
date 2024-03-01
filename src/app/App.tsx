@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import {Menu} from '@mui/icons-material';
-import {LinearProgress} from "@mui/material";
+import LinearProgress from "@mui/material/LinearProgress";
 import {CustomizedSnackbars} from "../components/ErrorSnackbar/ErrorSnackbar";
 import {useSelector} from "react-redux";
 import {useAppSelector} from "./store";
@@ -21,13 +21,14 @@ import {StatusType} from "./app-reducer";
 
 function App() {
 
+
     const status = useAppSelector<StatusType>(state => state.app.status)
 
     let loading
 
     if (status === "loading") {
         // console.log("loading run")
-        loading = <LinearProgress/>
+        loading = <LinearProgress color={"secondary"}/>
     }
 
     return (

@@ -2,7 +2,7 @@ import * as React from 'react';
 // import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {AppRootStateType, useAppDispatch} from "../../app/store";
 import {setAppErrorAC} from "../../app/app-reducer";
 
@@ -32,7 +32,7 @@ export function CustomizedSnackbars() {
     return (
         // <div>
         //     <Button onClick={handleClick}>Open Snackbar</Button>
-        <Snackbar open={isOpen} autoHideDuration={2000} onClose={handleClose}>
+        <Snackbar open={isOpen} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{horizontal:"left",vertical:"bottom"}}>
             <Alert
                 onClose={handleClose}
                 severity="error"
